@@ -164,7 +164,7 @@ function analyzePrompt(prompt, params = {}) {
     const maxTokens = Number.isFinite(params.max_tokens) ? params.max_tokens : null;
     if (!maxTokens) {
         issues.push({ id: 'NO_MAX_TOKENS', sev: 'high', msg: 'No output cap set; responses may be longer than needed.' });
-        tips.push('Try to be more specific and set an output length limit (e.g., max_tokens).');
+        tips.push('Looks good! Also, it is also good practice to define output length limit (e.g., max_tokens).');
     }
 
     if (!hasFormatInstruction(prompt) && (task === 'summarize' || task === 'write')) {

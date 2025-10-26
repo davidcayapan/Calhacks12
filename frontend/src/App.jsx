@@ -1,11 +1,10 @@
-// App.jsx (JS version — no TypeScript syntax)
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import "./App.css";
-import { analyzePrompt as analyzeAPI, chatWithLLM } from "./api";
+import { analyzePrompt as analyzeAPI } from "./api";
 
-// Robust tip extractor: handles strings/objects; has fallbacks.
-function pickTip(r) {
-  const arr = r?.tips;
+// Robust tip extractor: handles strings or objects; falls back to suggestedPrompt/autofix/default.
+function pickTip(report) {
+  const arr = report?.tips;
   if (Array.isArray(arr) && arr.length > 0) {
     const first = arr[0];
     if (typeof first === "string") return first.trim();
@@ -14,53 +13,41 @@ function pickTip(r) {
       if (t) return t;
     }
   }
-  if (typeof r?.suggestedPrompt === "string" && r.suggestedPrompt.trim()) {
-    return `Try this: ${r.suggestedPrompt.trim()}`;
+  if (typeof report?.suggestedPrompt === "string" && report.suggestedPrompt.trim()) {
+    return `Try this: ${report.suggestedPrompt.trim()}`;
   }
-  const af = r?.autofixes?.[0];
+  const af = report?.autofixes?.[0];
   const afText = (af?.prompt || af?.text || af?.value || "").trim();
   if (afText) return `Suggested rewrite: ${afText}`;
   return "Tip: Ask for concise, structured output (e.g., 3 bullets or JSON) and set a hard length cap.";
 }
 
 export default function App() {
-  // ---------- Analyze state ----------
   const [query, setQuery] = useState("");
-  const [report, setReport] = useState(null); // { score, estTokens, co2g, kWh, water_L, usageLabel, tipText, _raw }
-  const [loadingAnalyze, setLoadingAnalyze] = useState(false);
+  const [report, setReport] = useState(null);   // flattened for UI
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const inputRef = useRef(null);
 
-  // ---------- Chat state ----------
-  const [chatOpen, setChatOpen] = useState(false);
-  const [chatLoading, setChatLoading] = useState(false);
-  const [messages, setMessages] = useState([]); // [{role:"user"|"assistant"|"system", content:string}]
-
-  // ---------- Refs ----------
-  const analyzeInputRef = useRef(null);
-  const chatEndRef = useRef(null);
-
-  // ---------- Effects ----------
-  useEffect(() => {
-    if (chatOpen) chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [chatOpen, messages]);
-
-  // ---------- Analyze handlers ----------
   const handleAnalyze = async () => {
-    const txt = query.trim();
-    if (!txt || loadingAnalyze) return;
-
-    setLoadingAnalyze(true);
+    if (!query.trim() || loading) return;
+    setLoading(true);
     setError("");
     setReport(null);
 
     try {
-      const res = await analyzeAPI(txt, { language: "en" });
+      const res = await analyzeAPI(query, { language: "en" });
       const r = res?.report || res;
 
+      // --- Map backend → UI fields (minimal + safe) ---
       const estTokens = r?.metrics?.input?.tokens ?? 0;
       const score = r?.score ?? 0;
+
+      // backend provides kg; UI shows grams
       const co2kg = r?.impact_estimate?.CO2e_kg ?? 0;
       const co2g = Number(co2kg) * 1000;
+
+      // surface energy + water too
       const kWh = r?.impact_estimate?.kWh ?? 0;
       const water_L = r?.impact_estimate?.water_L ?? 0;
 
@@ -70,7 +57,10 @@ export default function App() {
             estTokens > 40 ? "Moderate Token Usage." :
               "Low Token Usage.";
 
+      // ✅ Correct: handle tips as strings or objects (and fallbacks)
       const tipText = pickTip(r);
+
+      console.log("r", r);
 
       setReport({
         score,
@@ -80,46 +70,22 @@ export default function App() {
         water_L,
         usageLabel,
         tipText,
-        _raw: r,
+        _raw: r
       });
 
-      analyzeInputRef.current?.focus();
+      inputRef.current?.focus();
       setTimeout(() => {
         document.getElementById("reportCard")?.scrollIntoView({ behavior: "smooth", block: "start" });
       }, 0);
     } catch (e) {
       console.error(e);
-      setError(e?.message || "Analyze failed.");
+      setError(e.message || "Analyze failed.");
     } finally {
-      setLoadingAnalyze(false);
+      setLoading(false);
     }
   };
 
-  // ---------- Chat: minimal hook-in (uses same input) ----------
-  const handleSendInline = async () => {
-    const text = query.trim();
-    if (!text || chatLoading) return;
-
-    setChatOpen(true);
-    setMessages(m => [...m, { role: "user", content: text }]);
-    setChatLoading(true);
-
-    try {
-      const res = await chatWithLLM(text, {}); // POST /api/chat
-      const assistantText =
-        (res && typeof res.response === "string" && res.response) ||
-        JSON.stringify(res);
-      setMessages(m => [...m, { role: "assistant", content: assistantText }]);
-    } catch (e) {
-      console.error(e);
-      setMessages(m => [...m, { role: "assistant", content: `⚠️ Chat failed: ${e?.message || e}` }]);
-    } finally {
-      setChatLoading(false);
-      setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: "smooth" }), 0);
-    }
-  };
-
-  // ---------- Gauge math (unchanged) ----------
+  // ring math for circular gauge (unchanged)
   const size = 140;
   const stroke = 14;
   const rsize = (size - stroke) / 2;
@@ -127,8 +93,10 @@ export default function App() {
   const pct = report?.score ?? 0;
   const dash = (pct / 100) * C;
 
-  // ---------- Bubble text ----------
-  const bubbleText = report?.tipText || "Hi there! I'm Sustaina-Bot. Let’s make your AI queries greener!";
+  // Bubble text: use live tip if present; else original greeting
+  const bubbleText =
+    report?.tipText ||
+    "Hi there! I'm Sustaina-Bot. Let’s make your AI queries greener!";
 
   return (
     <div className="shell">
@@ -151,13 +119,13 @@ export default function App() {
         <p className="sub"></p>
       </header>
 
-      {/* Analyze panel */}
-      <section className={`panel ${chatOpen ? "panel--compact" : ""}`}>
+      {/* Input panel */}
+      <section className="panel">
         <label className="fieldLabel" htmlFor="queryInput">Your Query:</label>
         <div className="inputRow">
           <input
             id="queryInput"
-            ref={analyzeInputRef}
+            ref={inputRef}
             className="queryInput"
             type="text"
             placeholder="E.g., What are the long-term effects of deep-sea mining?"
@@ -168,35 +136,22 @@ export default function App() {
               if (error) setError("");
             }}
           />
-          <div className="btnRow">
-            <button
-              className="analyzeBtn"
-              onClick={handleAnalyze}
-              disabled={!query.trim() || loadingAnalyze}
-              aria-label="Analyze"
-              title="Analyze"
-            >
-              <span className="bolt" aria-hidden>
-                <svg viewBox="0 0 24 24" width="22" height="22">
-                  <path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z" fill="currentColor" />
-                </svg>
-              </span>
-              {loadingAnalyze ? "Analyzing…" : "Analyze"}
-            </button>
-
-            {/* NEW: Send button to hit /api/chat */}
-            <button
-              className="sendInlineBtn"
-              onClick={handleSendInline}
-              disabled={!query.trim() || chatLoading}
-              aria-label="Send to chat"
-              title="Send to chat"
-            >
-              {chatLoading ? "Sending…" : "Send"}
-            </button>
-          </div>
+          <button
+            className="analyzeBtn"
+            onClick={handleAnalyze}
+            disabled={!query.trim() || loading}
+            aria-label="Analyze"
+            title="Analyze"
+          >
+            <span className="bolt" aria-hidden>
+              <svg viewBox="0 0 24 24" width="22" height="22">
+                <path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z" fill="currentColor" />
+              </svg>
+            </span>
+            {loading ? "Analyzing…" : "Analyze"}
+          </button>
         </div>
-        {error && <div className="errorText">{error}</div>}
+        {error && <div style={{ color: "#f87171", marginTop: 8 }}>{error}</div>}
       </section>
 
       {/* Report */}
@@ -223,9 +178,9 @@ export default function App() {
             </div>
 
             <div className="callout">
-              <div className={`severity ${(report.estTokens > 200) ? "veryhigh" :
-                  (report.estTokens > 100) ? "high" :
-                    (report.estTokens > 40) ? "med" : "low"
+              <div className={`severity ${report.estTokens > 200 ? "veryhigh" :
+                report.estTokens > 100 ? "high" :
+                  report.estTokens > 40 ? "med" : "low"
                 }`}>
                 {report.usageLabel}
               </div>
@@ -249,12 +204,18 @@ export default function App() {
             </div>
 
             <div className="metric">
-              <div className="metricLabel"><span className="stackIcon" aria-hidden>⚡</span>Energy (kWh)</div>
+              <div className="metricLabel">
+                <span className="stackIcon" aria-hidden>⚡</span>
+                Energy (kWh)
+              </div>
               <div className="metricValue">{(report.kWh || 0).toFixed(5)}</div>
             </div>
 
             <div className="metric">
-              <div className="metricLabel"><span className="stackIcon" aria-hidden>💧</span>Water (L)</div>
+              <div className="metricLabel">
+                <span className="stackIcon" aria-hidden>💧</span>
+                Water (L)
+              </div>
               <div className="metricValue">{(report.water_L || 0).toFixed(5)}</div>
             </div>
 
@@ -269,26 +230,6 @@ export default function App() {
               </div>
               <div className="metricValue red">{(report.co2g || 0).toFixed(5)}</div>
             </div>
-          </div>
-        </section>
-      )}
-
-      {/* Chat section */}
-      {chatOpen && (
-        <section className="chatSection">
-          <div className="chatHeader">
-            <div className="chatTitle">Chat</div>
-            <div className="chatHint">Messages come from <code>/api/chat</code></div>
-          </div>
-
-          <div className="chatBody">
-            {messages.length === 0 && <div className="chatEmpty">No messages yet.</div>}
-            {messages.map((m, i) => (
-              <div key={i} className={`msg ${m.role}`}>
-                <div className="bubbleMsg">{m.content}</div>
-              </div>
-            ))}
-            <div ref={chatEndRef} />
           </div>
         </section>
       )}
