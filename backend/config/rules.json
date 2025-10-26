@@ -1,0 +1,36 @@
+{
+    "thresholds": {
+        "maxWordsPrompt": 150,
+        "maxSentencesPrompt": 10,
+        "longWordLen": 14,
+        "defaultMaxTokens": 300
+    },
+    "vaguePhrases": [
+        "\\b(improve|make (it|this) better|refine|polish|any ideas|your thoughts|enhance)\\b",
+        "\\b(help me (with|understand))\\b"
+    ],
+    "verbosePhrases": [
+        "\\b(in great detail)\\b",
+        "\\b(elaborate on)\\b",
+        "\\b(\\d+-word)\\b",
+        "\\b(lengthy)\\b",
+        "\\b(very detailed)\\b",
+        "\\b(extremely detailed)\\b"
+    ],
+    "taskKeywords": {
+        "summarize": "\\b(summarize|tl;dr|shorten|brief)\\b",
+        "extract": "\\b(extract|pull|list|find fields|json)\\b",
+        "write": "\\b(write|compose|draft|create)\\b",
+        "code": "\\b(code|function|class|regex|sql|python|javascript)\\b",
+        "translate": "\\b(translate|into|from)\\b"
+    },
+    "impact": {
+        "kWh_per_1k_tokens_mid": 0.02,
+        "grid_kgCO2_per_kWh": 0.35,
+        "water_L_per_kWh": 1.0
+    },
+    "ai_config": {
+        "modelName": "gemini-2.5-flash",
+        "systemInstruction": "You are a helpful assistant"
+    }
+}
