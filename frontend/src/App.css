@@ -415,4 +415,65 @@
   border-color: rgba(41, 209, 122, 0.35);
 }
 
-/* Reuse your existing classes: .panel, .queryInput, .analyzeBtn, .errorText, etc. */
+/* Panels */
+.tipsPanel,
+.issuesPanel {
+  margin-top: 16px;
+}
+
+.panelTitle {
+  font-weight: 700;
+  margin: 0 0 8px 0;
+}
+
+/* Tips (feedback) */
+.tipsList {
+  display: grid;
+  gap: 8px;
+  padding-left: 18px;
+}
+
+.tipItem {
+  list-style: disc;
+  color: #cfd8df;
+}
+
+/* Issues */
+.issuesList {
+  display: grid;
+  gap: 10px;
+}
+
+.issueItem {
+  background: #0f141a;
+  border: 1px solid #22303a;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.sevTag {
+  margin-left: 8px;
+  padding: 2px 6px;
+  font-size: 12px;
+  border-radius: 999px;
+  border: 1px solid #2a2f36;
+  color: #9bb0be;
+}
+
+.issueMsg {
+  color: #9bb0be;
+  margin-top: 4px;
+}
+
+/* Optional severity accents */
+.sev-high {
+  border-color: rgba(255, 107, 107, .35);
+}
+
+.sev-med {
+  border-color: rgba(244, 197, 66, .35);
+}
+
+.sev-low {
+  border-color: rgba(41, 209, 122, .25);
+}

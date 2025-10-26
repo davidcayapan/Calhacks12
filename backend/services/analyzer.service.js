@@ -168,11 +168,11 @@ function analyzePrompt(prompt, params = {}) {
     }
 
     if (!hasFormatInstruction(prompt) && (task === 'summarize' || task === 'write')) {
-        issues.push({ id: 'MISSING_FORMAT', sev: 'med', msg: 'No format guidance; ask for bullets, outline, or a small paragraph limit.' });
+        issues.push({ id: 'MISSING_FORMAT', sev: 'med', msg: 'No format guidance is provided. Try for bullets, outline, or a small paragraph limit.' });
     }
 
     if (repeats >= 1) {
-        issues.push({ id: 'REDUNDANCY', sev: 'low', msg: 'Repeated phrases detected; tighten wording to reduce processing.' });
+        issues.push({ id: 'REDUNDANCY', sev: 'low', msg: 'Repeated phrases detected. Tighten wording to reduce processing.' });
     }
 
     const temp = typeof params.temperature === 'number' ? params.temperature : null;
