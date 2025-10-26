@@ -89,7 +89,7 @@ export default function App() {
   /** Bubble text **/
   const bubbleText =
     report?.tipText ||
-    "Hi there! I'm Sustaina-Bot. Let’s make your AI queries greener!";
+    "Hi there! I'm Sustaina-Blob. Let’s make your AI queries greener!";
 
   return (
     <div className="shell">
@@ -110,7 +110,7 @@ export default function App() {
               />
             </svg>
           </span>
-          Sustaina-Bot
+          Sustaina-Blob
         </h1>
       </header>
 
