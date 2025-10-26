@@ -16,40 +16,53 @@
   gap: 14px;
   margin-top: 8px;
 }
+
 .bubble {
   background: #eef6f3;
   color: #0e1513;
   font-weight: 600;
   border-radius: 16px;
   padding: 12px 16px;
-  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .25);
   position: relative;
   max-width: 680px;
   text-align: center;
 }
+
 .bubble::after {
   content: "";
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
   bottom: -10px;
-  width: 0; height: 0;
+  width: 0;
+  height: 0;
   border-left: 12px solid transparent;
   border-right: 12px solid transparent;
   border-top: 12px solid #eef6f3;
 }
+
 .mascot {
-  width: 72px; height: 72px;
+  width: 72px;
+  height: 72px;
   background: #10b981;
   border-radius: 50%;
-  display: grid; place-items: center;
-  box-shadow: 0 10px 28px rgba(16,185,129,.35);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 10px 28px rgba(16, 185, 129, .35);
 }
+
 .mascot .eyes {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
 }
+
 .mascot .eyes span {
-  width: 12px; height: 12px; background: #0b1211; border-radius: 50%;
+  width: 12px;
+  height: 12px;
+  background: #0b1211;
+  border-radius: 50%;
 }
 
 /* ===== Header (title + subtitle) ===== */
@@ -57,6 +70,7 @@
   align-self: end;
   text-align: center;
 }
+
 .brand {
   font-size: clamp(34px, 5vw, 56px);
   font-weight: 800;
@@ -66,7 +80,11 @@
   gap: 12px;
   color: #f7faf9;
 }
-.brand .leaf { color: #10b981; }
+
+.brand .leaf {
+  color: #10b981;
+}
+
 .sub {
   margin-top: 10px;
   color: #9fb2a9;
@@ -82,19 +100,22 @@
   border: 1px solid #24303a;
   border-radius: 18px;
   padding: clamp(14px, 2.6vw, 26px);
-  box-shadow: 0 12px 40px rgba(0,0,0,.35);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, .35);
 }
+
 .fieldLabel {
   display: block;
   font-weight: 700;
   color: #10b981;
   margin-bottom: 10px;
 }
+
 .inputRow {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 16px;
 }
+
 .queryInput {
   width: 100%;
   height: 64px;
@@ -107,12 +128,17 @@
   outline: none;
   transition: border-color .2s, box-shadow .2s, background .2s;
 }
-.queryInput::placeholder { color: #7a8b84; }
+
+.queryInput::placeholder {
+  color: #7a8b84;
+}
+
 .queryInput:focus {
   border-color: #10b981;
-  box-shadow: 0 0 0 4px rgba(16,185,129,.18);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, .18);
   background: #12171d;
 }
+
 .analyzeBtn {
   display: inline-flex;
   align-items: center;
@@ -130,10 +156,24 @@
   cursor: pointer;
   transition: transform .06s ease, filter .2s ease, background .2s ease;
 }
-.analyzeBtn:hover { filter: brightness(0.95); transform: translateY(1px); }
-.analyzeBtn:active { transform: translateY(2px) scale(0.99); }
-.analyzeBtn:disabled { opacity: .5; cursor: not-allowed; }
-.analyzeBtn .bolt { display: inline-flex; }
+
+.analyzeBtn:hover {
+  filter: brightness(0.95);
+  transform: translateY(1px);
+}
+
+.analyzeBtn:active {
+  transform: translateY(2px) scale(0.99);
+}
+
+.analyzeBtn:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.analyzeBtn .bolt {
+  display: inline-flex;
+}
 
 /* ===== Report card ===== */
 .reportCard {
@@ -144,46 +184,68 @@
   border: 1px solid #24303a;
   border-radius: 18px;
   padding: clamp(18px, 3vw, 28px);
-  box-shadow: 0 12px 40px rgba(0,0,0,.35);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, .35);
 }
+
 .reportTitle {
   font-size: clamp(22px, 2.2vw, 28px);
   font-weight: 800;
   margin: 4px 0 16px 0;
 }
+
 .gaugeRow {
   display: grid;
   grid-template-columns: 200px 1fr;
   gap: 24px;
   align-items: center;
 }
+
 .gauge {
   position: relative;
-  width: 140px; height: 140px;
-  display: grid; place-items: center;
+  width: 140px;
+  height: 140px;
+  display: grid;
+  place-items: center;
 }
+
 .gaugeCenter {
   position: absolute;
-  display: grid; place-items: center;
+  display: grid;
+  place-items: center;
 }
+
 .gaugeValue {
   font-size: 28px;
   font-weight: 900;
 }
+
 .gaugeLabel {
   color: #9fb2a9;
   font-size: 12px;
   margin-top: 2px;
 }
-.gaugeProgress { filter: drop-shadow(0 6px 16px rgba(16,185,129,.35)); }
+
+.gaugeProgress {
+  filter: drop-shadow(0 6px 16px rgba(16, 185, 129, .35));
+}
 
 .callout .severity {
   font-weight: 800;
   margin-bottom: 6px;
 }
-.callout .severity.high { color: #ff6b6b; }
-.callout .severity.med { color: #ffb86b; }
-.callout .severity.low { color: #10b981; }
+
+.callout .severity.high {
+  color: #ff6b6b;
+}
+
+.callout .severity.med {
+  color: #ffb86b;
+}
+
+.callout .severity.low {
+  color: #10b981;
+}
+
 .callout .tip {
   color: #cbd7d1;
   max-width: 56ch;
@@ -202,12 +264,14 @@
   grid-template-columns: repeat(2, minmax(0, 260px));
   gap: 16px;
 }
+
 .metric {
   background: #0b1116;
   border: 1px solid #1f2a33;
   border-radius: 14px;
   padding: 16px 18px;
 }
+
 .metricLabel {
   color: #9fb2a9;
   display: inline-flex;
@@ -215,21 +279,140 @@
   gap: 8px;
   font-size: 14px;
 }
+
 .metricValue {
   margin-top: 8px;
   font-size: 26px;
   font-weight: 900;
 }
-.metricValue.green { color: #10b981; }
-.metricValue.red { color: #ff6b6b; }
-.stackIcon, .leafIcon { display: inline-flex; }
+
+.metricValue.green {
+  color: #10b981;
+}
+
+.metricValue.red {
+  color: #ff6b6b;
+}
+
+.stackIcon,
+.leafIcon {
+  display: inline-flex;
+}
 
 /* Responsive */
 @media (max-width: 880px) {
-  .gaugeRow { grid-template-columns: 1fr; }
-  .metrics { grid-template-columns: 1fr; }
+  .gaugeRow {
+    grid-template-columns: 1fr;
+  }
+
+  .metrics {
+    grid-template-columns: 1fr;
+  }
 }
+
 @media (max-width: 720px) {
-  .inputRow { grid-template-columns: 1fr; }
-  .analyzeBtn, .queryInput { height: 56px; }
+  .inputRow {
+    grid-template-columns: 1fr;
+  }
+
+  .analyzeBtn,
+  .queryInput {
+    height: 56px;
+  }
 }
+
+/* --- Button row --- */
+.btnRow {
+  display: flex;
+  gap: 10px;
+}
+
+.sendInlineBtn {
+  background: #1f9d65;
+  color: #0c1415;
+  border: none;
+  border-radius: 10px;
+  padding: 8px 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sendInlineBtn:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+/* Compact panel when chat is open (optional nudge) */
+.panel--compact {
+  margin-bottom: 10px;
+}
+
+/* --- Chat section (lightweight) --- */
+.chatSection {
+  margin-top: 14px;
+  background: #0f141a;
+  border: 1px solid #2a2f36;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.chatHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid #22303a;
+}
+
+.chatTitle {
+  font-weight: 600;
+}
+
+.chatHint {
+  color: #9bb0be;
+  font-size: 12px;
+}
+
+.chatBody {
+  max-height: 320px;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chatEmpty {
+  color: #9bb0be;
+  font-style: italic;
+  text-align: center;
+  padding: 16px 0;
+}
+
+.msg {
+  display: flex;
+}
+
+.msg.user {
+  justify-content: flex-end;
+}
+
+.msg.assistant {
+  justify-content: flex-start;
+}
+
+.bubbleMsg {
+  max-width: 80%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid #2a2f36;
+  background: #0c1015;
+  color: #e6e6e6;
+}
+
+.msg.user .bubbleMsg {
+  background: rgba(41, 209, 122, 0.1);
+  border-color: rgba(41, 209, 122, 0.35);
+}
+
+/* Reuse your existing classes: .panel, .queryInput, .analyzeBtn, .errorText, etc. */

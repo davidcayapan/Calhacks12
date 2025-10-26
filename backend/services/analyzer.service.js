@@ -144,7 +144,7 @@ function analyzePrompt(prompt, params = {}) {
     const vScore = vaguenessScore(prompt);
     if (vagueRegexHit || vScore >= 2) {
         issues.push({ id: 'VAGUE_LANGUAGE', sev: vScore >= 3 ? 'high' : 'med', msg: 'Vague verbs/adverbs likely to trigger retries.' });
-        tips.push('Specify audience, exact format, and success criteria.');
+        tips.push('Specify audience, exact format, and success criteria to have a more refined.');
     }
 
     const verboseRegexHit = (rules.verbosePhrases || []).some(rx => new RegExp(rx, 'i').test(prompt));
@@ -164,7 +164,7 @@ function analyzePrompt(prompt, params = {}) {
     const maxTokens = Number.isFinite(params.max_tokens) ? params.max_tokens : null;
     if (!maxTokens) {
         issues.push({ id: 'NO_MAX_TOKENS', sev: 'high', msg: 'No output cap set; responses may be longer than needed.' });
-        tips.push('Set max_tokens (e.g., 200) or request ≤120 words / ≤5 bullets.');
+        tips.push('Try to be more specific and set an output length limit (e.g., max_tokens).');
     }
 
     if (!hasFormatInstruction(prompt) && (task === 'summarize' || task === 'write')) {
